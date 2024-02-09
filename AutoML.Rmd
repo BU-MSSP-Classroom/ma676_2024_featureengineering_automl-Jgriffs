@@ -409,6 +409,7 @@ Can be easily done as
 
 ```{r}
 library(tidymodels)
+
 simple_ames <- 
   recipe(SalePrice ~ Neighborhood + `Gr Liv Area` + `Year Built` + `Bldg Type`,
          data = ames_raw) %>%
@@ -419,8 +420,6 @@ simple_ames <-
 
 However, this is not executed. You will use the framework of tidymodel
 workflow, which will run these transformation when fitting the model.
-
-# In class work ###Submit by Friday at noon!!!
 
 ### Model fitting
 
