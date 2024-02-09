@@ -549,6 +549,9 @@ colnames(test)  <- make.names(colnames(test))
 train$SalePrice <- log(train$SalePrice)
 test$SalePrice <- log(test$SalePrice)
 
+House_Model<-lm(log(SalePrice)~Neighborhood+Street+Build_Year,ames_raw_2008)
+
+
 ```
 
 ### AutoML with MLR3
@@ -565,7 +568,7 @@ devtools::install_github('https://github.com/mlr-org/mlr3extralearners')
 devtools::install_github('https://github.com/a-hanf/mlr3automl', dependencies = TRUE)
 ```
 
-#Left off here.... stuck on "Error: cannot predict, learner 'mlr3automl_pipeline.tuned' has not been trained yet"
+##ran into not trained error here
 ```{r,eval=FALSE}
 # load packages and data
 library(mlr3)
@@ -580,13 +583,15 @@ ames_model = AutoML(task)
 train_indices = sample(1:task$nrow, 2/3*task$nrow)
 ames_model$train(row_ids = train_indices)
 
-predict_indices = setdiff(1:task$nrow, train_indices)
-predictions = ames_model$predict(row_ids = predict_indices)
-plot(predictions$response,predictions$truth);abline(0,1)
-resampling_result = ames_model$resample()
-iml_explainer = ames_model$explain(iml_package = "iml")
-iml_pdp = iml::FeatureEffect$new(iml_explainer, feature="Lot.Area",  method="pdp")
-plot(iml_pdp)
+##this whole part just doesn't run on my computer
+
+# predict_indices = setdiff(1:task$nrow, train_indices)
+# predictions = ames_model$predict(row_ids = predict_indices)
+# plot(predictions$response,predictions$truth);abline(0,1)
+# resampling_result = ames_model$resample()
+# iml_explainer = ames_model$explain(iml_package = "iml")
+# iml_pdp = iml::FeatureEffect$new(iml_explainer, feature="Lot.Area",  method="pdp")
+# plot(iml_pdp)
 ```
 
 ### H2O autoML
@@ -594,28 +599,30 @@ plot(iml_pdp)
 h2o autoML is well known in the field as something pretty powerful.
 <https://docs.h2o.ai/h2o/latest-stable/h2o-docs/automl.html>
 
+
+##my computer could not handle this part... nearly froze
 ```{r,eval=FALSE}
 # load packages and data
-library(h2o)
-
-# init h2o
-h2o.init()
-h2o.no_progress()
-
-# upload the data
-train_hf <- as.h2o(train)
-test_hf <- as.h2o(test)
-
-# fit a model
-automl <- h2o.automl(y = "SalePrice", training_frame = train_hf, max_runtime_secs = 300)
-model <- automl@leader
-predictions=h2o.predict(model,newdata = test_hf)
-plot( as.vector(predictions$predict),as.vector(test_hf$SalePrice));abline(0,1)
-cor( as.vector(predictions$predict),as.vector(test_hf$SalePrice))
-
-# shutdown h2o
-
-h2o.shutdown(prompt =F) 
+# library(h2o)
+# 
+# # init h2o
+# h2o.init()
+# h2o.no_progress()
+# 
+# # upload the data
+# train_hf <- as.h2o(train)
+# test_hf <- as.h2o(test)
+# 
+# # fit a model
+# automl <- h2o.automl(y = "SalePrice", training_frame = train_hf, max_runtime_secs = 300)
+# model <- automl@leader
+# predictions=h2o.predict(model,newdata = test_hf)
+# plot( as.vector(predictions$predict),as.vector(test_hf$SalePrice));abline(0,1)
+# cor( as.vector(predictions$predict),as.vector(test_hf$SalePrice))
+# 
+# # shutdown h2o
+# 
+# h2o.shutdown(prompt =F) 
 ```
 
 ### automl
@@ -628,16 +635,17 @@ Optimization.
 
 <https://cran.r-project.org/web/packages/automl/index.html>
 
+#this also would just not run
 ```{r,eval=FALSE}
-library(automl)
-amlmodel = automl_train_manual(Xref = train,
-                               Yref = train$SalePrice
-                               %>% as.numeric(),
-                               hpar = list(learningrate = 0.01,
-                               minibatchsize = 2^2,
-                               numiterations = 600))
-prediction = automl_predict(model = amlmodel, X = test) 
-plot(prediction,test$SalePrice);abline(0,1)
+# library(automl)
+# amlmodel = automl_train_manual(Xref = train,
+#                                Yref = train$SalePrice
+#                                %>% as.numeric(),
+#                                hpar = list(learningrate = 0.01,
+#                                minibatchsize = 2^2,
+#                                numiterations = 600))
+# prediction = automl_predict(model = amlmodel, X = test) 
+# plot(prediction,test$SalePrice);abline(0,1)
 ```
 
 ### autoxgboost
